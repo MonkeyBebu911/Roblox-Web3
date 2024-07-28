@@ -12,7 +12,9 @@ Once a player fulfill two conditions, namely interacting with a target advertise
 ![alt text](https://github.com/MonkeyBebu911/Roblox-Web3/blob/main/images/image3.png)
 
 Demo Video 
-[Insert Demo Video Here]
+[![IMAGE ALT TEXT](http://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg)](http://www.youtube.com/watch?v=YOUTUBE_VIDEO_ID_HERE "Video Title")
 
 In-Depth Explanation
-[Insert Explanatory Video Here]
+[![IMAGE ALT TEXT](http://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg)](http://www.youtube.com/watch?v=YOUTUBE_VIDEO_ID_HERE "Video Title")
+
+
