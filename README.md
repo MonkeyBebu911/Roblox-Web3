@@ -15,6 +15,6 @@ Demo Video
 [![Video1](https://github.com/MonkeyBebu911/Roblox-Web3/blob/main/images/video1.png)](https://www.youtube.com/watch?v=lyFaAodygJ4)
 
 In-Depth Explanation
-[![Video2](http://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg)](https://www.youtube.com/watch?v=q2buS1yc1f8)
+[![Video2](https://github.com/MonkeyBebu911/Roblox-Web3/blob/main/images/video2.png)](https://www.youtube.com/watch?v=q2buS1yc1f8)
 
 
