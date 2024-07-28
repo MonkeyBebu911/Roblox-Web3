@@ -1,41 +1,37 @@
--- Tracks the amount of time that a player has spent in a server
-
+local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
-local player = game.Players.LocalPlayer
-local username = player.Name
-
 
 -- Function to track player time
 local function trackPlayerTime(player)
 	local joinTime = os.time()
-	local timeSpent = 0
-	local messageShown = false
 
 	while player.Parent do
-		timeSpent = os.time() - joinTime
+		local timeSpent = os.time() - joinTime
 
-		if timeSpent >= 300 and not messageShown then  -- 300 seconds = 5 minutes
+		if timeSpent >= 300 then  -- 300 seconds = 5 minutes
 			print(player.Name .. " has spent 5 minutes in the server!")
-			-- message shown is the key variable in which we want information to be sent / send 
-			messageShown = true
-
-			local data = {
-				playerName = player.Name
-				messageShown = messageShown
-			}
-
-			local jsonData = HttpService:JSONEncode(data)
-			local url = ""
-
+			local datapoint = {
+				username = player.Name,
+			}	
+			
+			local jsonData = HttpService:JSONEncode(datapoint)
+			local url = "http://localhost:3000/reward"
+	
 			local success, response = pcall(function()
 				return HttpService:PostAsync(url, jsonData, Enum.HttpContentType.ApplicationJson)
-            		end)
-
-		end
+			end)
+			
+			if success then
+				print("Reward request sent for " .. player.Name)
+			else
+				warn("Failed to send reward request: " .. tostring(response))
+			end
+			
+			break  -- Exit the loop after sending the reward
+		end 
 
 		wait(1)  -- Wait for 1 second before checking again
 	end
-	
 end
 
 -- Connect the function to PlayerAdded event
