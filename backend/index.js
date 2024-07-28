@@ -16,15 +16,14 @@ const userClicks = {};
 // Polkadot API setup
 let api;
 let contract;
-const contractAddress = '5Ffoj4ZVkgtLTqsYzsoBTBNoSkgdxCTLLEuj5xYvMcZKHtQs';
+const contractAddress = '5GqMzDdKrDdusKuULfjbuxFZYKKYS8xUe1JQFELfjUy8wkhJ';
 const contractAbi = JSON.parse(fs.readFileSync('../ad_contract.json', 'utf8'));
 
 async function setupPolkadot() {
     try {
-        const wsProvider = new WsProvider('wss://rococo-rpc.polkadot.io');
+        const wsProvider = new WsProvider('wss://rococo-contracts-rpc.polkadot.io');
         api = await ApiPromise.create({ provider: wsProvider });
 
-        // Ensure api is ready before proceeding
         await api.isReady;
 
         contract = new ContractPromise(api, contractAbi, contractAddress);
@@ -45,22 +44,45 @@ async function rewardAdvertiser(adAddress, rewardAddress) {
     const caller = keyring.addFromUri('zone october fashion treat near canal slide zoo grab barrel phone waste');
 
     try {
-        // Encode the call data for the reward function
-        const { gasRequired, result } = await contract.query.reward(caller.address, {
-            value: 0,
-            gasLimit: -1,
+        const gasLimit = api.registry.createType('WeightV2', {
+            refTime: 1000000000n,
+            proofSize: 50000n,
+        });
+
+        // Query the contract first
+        const { result, output } = await contract.query.reward(caller.address, {
+            gasLimit,
+            storageDepositLimit: null,
         }, adAddress, rewardAddress);
 
         if (result.isErr) {
-            throw new Error(result.asErr);
+            console.error('Query failed:', result.asErr.toHuman());
+            throw new Error(`Query failed: ${result.asErr.toHuman()}`);
         }
 
-        // Send the actual transaction
-        const txHash = await contract.tx
-            .reward({ gasLimit: gasRequired }, adAddress, rewardAddress)
-            .signAndSend(caller);
+        console.log('Query successful:', output.toHuman());
 
-        return { success: true, txHash: txHash.toHex() };
+        // Send the actual transaction
+        return new Promise((resolve, reject) => {
+            contract.tx
+                .reward({ gasLimit }, adAddress, rewardAddress)
+                .signAndSend(caller, ({ status, events }) => {
+                    if (status.isInBlock) {
+                        console.log('Transaction included at blockHash', status.asInBlock.toHex());
+                        resolve({ success: true, status: 'inBlock', blockHash: status.asInBlock.toHex() });
+                    } else if (status.isFinalized) {
+                        console.log('Transaction finalized at blockHash', status.asFinalized.toHex());
+                        resolve({ success: true, status: 'finalized', blockHash: status.asFinalized.toHex() });
+                    } else if (status.isError) {
+                        console.error('Transaction error');
+                        reject({ success: false, error: 'Transaction error' });
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    reject({ success: false, error: error.toString() });
+                });
+        });
     } catch (error) {
         console.error('Error rewarding advertiser:', error);
         return { success: false, error: error.message };
@@ -102,7 +124,8 @@ app.post('/reward', async (req, res) => {
         if (rewardResult.success) {
             return res.status(200).json({
                 message: `Advertiser rewarded for user ${username}.`,
-                txHash: rewardResult.txHash
+                txHash: rewardResult.txHash,
+                status: rewardResult.status
             });
         } else {
             return res.status(500).json({ error: 'Failed to reward advertiser', details: rewardResult.error });
