@@ -11,4 +11,8 @@ Once a player fulfill two conditions, namely interacting with a target advertise
 ![alt text](https://github.com/MonkeyBebu911/Roblox-Web3/blob/main/images/image2.png)
 ![alt text](https://github.com/MonkeyBebu911/Roblox-Web3/blob/main/images/image3.png)
 
-[Insert Videos Here]
+Demo Video 
+[Insert Demo Video Here]
+
+In-Depth Explanation
+[Insert Explanatory Video Here]
