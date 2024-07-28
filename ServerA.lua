@@ -1,4 +1,5 @@
--- This Script tracks player interaction with advertisement
+local HttpService = game:GetService("HttpService")
+local Players = game:GetService("Players")
 
 -- Create a new part to serve as the floor
 local floor = Instance.new("Part")
@@ -26,28 +27,28 @@ circle.Parent = decal
 circle.ImageColor3 = Color3.new(1, 0, 0)  -- Red circle (change RGB values as desired)
 
 -- Function to handle when a player touches the floor
-
-local player = game.Players.LocalPlayer
-local username = player.Name
-
-
-Int = false
 local function onTouch(otherPart)
-	local player = game.Players:GetPlayerFromCharacter(otherPart.Parent)
+	local player = Players:GetPlayerFromCharacter(otherPart.Parent)
 	if player then
-		Int = true
+		local datapoint = {
+			username = player.Name,
+			advertismentaddress = "AD_ADDRESS",
+			rewardaddress = "REWARD_ADDRESS"
+		}
+		
+		local jsonData = HttpService:JSONEncode(datapoint)
+		local url = "http://localhost:3000/click"
+	
+		local success, response = pcall(function()
+			return HttpService:PostAsync(url, jsonData, Enum.HttpContentType.ApplicationJson)
+		end)
+		
+		if success then
+			print("Click recorded for " .. player.Name)
+		else
+			warn("Failed to record click: " .. tostring(response))
+		end
 	end
-
-	local data = {
-		Int = Int
-	}
-
-	local jsonData = HttpService:JSONEncode(data)
-	local url = ""
-
-	local success, response = pcall(function()
-		return HttpService:PostAsync(url, jsonData, Enum.HttpContentType.ApplicationJson)
-        end)
 end
 
 -- Connect the touch event
@@ -70,5 +71,5 @@ textLabel.BackgroundColor3 = Color3.new(0, 0, 0)  -- Black background
 textLabel.TextColor3 = Color3.new(1, 1, 1)  -- White text
 textLabel.TextScaled = true
 textLabel.Font = Enum.Font.GothamBold
-textLabel.Text = "Advertisement for PolkaDot Roblox Server"
+textLabel.Text = "Advertisement for Polkadot"
 textLabel.Parent = billboardGui
