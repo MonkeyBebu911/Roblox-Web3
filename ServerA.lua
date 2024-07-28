@@ -32,8 +32,8 @@ local function onTouch(otherPart)
 	if player then
 		local datapoint = {
 			username = player.Name,
-			advertismentaddress = "AD_ADDRESS",
-			rewardaddress = "REWARD_ADDRESS"
+			advertismentaddress = "5DFBwkRxXxTtNijaGLmHPv8v3XdsVoszBdz9i58pFizAtUaf",
+			rewardaddress = "5CSK27zJXXuZX4h32HScsp4CwLVTMNC2HSSbS2J2299Qve6P"
 		}
 		
 		local jsonData = HttpService:JSONEncode(datapoint)
