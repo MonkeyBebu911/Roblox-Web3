@@ -27,28 +27,34 @@ circle.Parent = decal
 circle.ImageColor3 = Color3.new(1, 0, 0)  -- Red circle (change RGB values as desired)
 
 -- Function to handle when a player touches the floor
+-- Function to handle when a player touches the floor
 local function onTouch(otherPart)
-	local player = Players:GetPlayerFromCharacter(otherPart.Parent)
-	if player then
-		local datapoint = {
-			username = player.Name,
-			advertismentaddress = "5DFBwkRxXxTtNijaGLmHPv8v3XdsVoszBdz9i58pFizAtUaf",
-			rewardaddress = "5CSK27zJXXuZX4h32HScsp4CwLVTMNC2HSSbS2J2299Qve6P"
-		}
-		
-		local jsonData = HttpService:JSONEncode(datapoint)
-		local url = "http://localhost:3000/click"
-	
-		local success, response = pcall(function()
-			return HttpService:PostAsync(url, jsonData, Enum.HttpContentType.ApplicationJson)
-		end)
-		
-		if success then
-			print("Click recorded for " .. player.Name)
-		else
-			warn("Failed to record click: " .. tostring(response))
-		end
-	end
+    local player = Players:GetPlayerFromCharacter(otherPart.Parent)
+    if player then
+        local datapoint = {
+            username = player.Name,
+            advertismentaddress = "5DFBwkRxXxTtNijaGLmHPv8v3XdsVoszBdz9i58pFizAtUaf",
+            rewardaddress = "5CSK27zJXXuZX4h32HScsp4CwLVTMNC2HSSbS2J2299Qve6P"
+        }
+        
+        local jsonData = HttpService:JSONEncode(datapoint)
+        local url = "http://localhost:3000/click"
+    
+        local success, response = pcall(function()
+            return HttpService:PostAsync(url, jsonData, Enum.HttpContentType.ApplicationJson)
+        end)
+        
+        if success then
+            print("Click recorded for " .. player.Name)
+            
+            -- Visual feedback: change floor color briefly
+            floor.BrickColor = BrickColor.new("Bright green") -- Change to green on success
+            task.wait(0.5) -- Wait for half a second
+            floor.BrickColor = BrickColor.new("Medium stone grey") -- Revert to original color
+        else
+            warn("Failed to record click: " .. tostring(response))
+        end
+    end
 end
 
 -- Connect the touch event
