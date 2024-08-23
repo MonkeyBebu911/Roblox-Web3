@@ -23,6 +23,13 @@ local function trackPlayerTime(player)
 			
 			if success then
 				print("Reward request sent for " .. player.Name)
+				
+				-- Visual notification
+				local message = Instance.new("Message")
+				message.Text = "You have spent 5 minutes in the server! Reward request sent."
+				message.Parent = player:FindFirstChild("PlayerGui") or player:WaitForChild("PlayerGui")
+				task.wait(3)  -- Show the message for 3 seconds
+				message:Destroy()
 			else
 				warn("Failed to send reward request: " .. tostring(response))
 			end
